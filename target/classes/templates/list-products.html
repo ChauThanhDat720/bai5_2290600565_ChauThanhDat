@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách sản phẩm</title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="active">Home</a>
+        <a href="/products">Products</a>
+    </nav>
+
+    <div class="container">
+        <h1>Quản lý sản phẩm</h1>
+        <div class="card">
+            <a th:href="@{/products/new}" class="btn btn-primary">Create New Product</a>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Image</th>
+                        <th>Price</th>
+                        <th>Category Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="product, iter : ${products}">
+                        <td th:text="${iter.count}">1</td>
+                        <td th:text="${product.name}">Lenovo ThinkPad</td>
+                        <td>
+                            <img th:src="${product.image}" alt="Product Image" class="product-img">
+                        </td>
+                        <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">27000</td>
+                        <td th:text="${product.category != null ? product.category.name : 'N/A'}">Laptop</td>
+                        <td>
+                            <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-sm btn-dark" style="background:#6c757d; color:white;">Edit</a>
+                            <a th:href="@{/products/delete/{id}(id=${product.id})}" 
+                               class="btn btn-sm btn-danger" 
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Delete</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 - Phát triển ứng dụng với J2EE</p>
+    </footer>
+</body>
+</html>

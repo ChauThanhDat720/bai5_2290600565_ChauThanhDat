@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${product.id == null ? 'Thêm sản phẩm' : 'Sửa sản phẩm'}">Product Form</title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/">Home</a>
+        <a href="/products" class="active">Products</a>
+    </nav>
+
+    <div class="container">
+        <h1 th:text="${product.id == null ? 'Thêm sản phẩm mới' : 'Cập nhật sản phẩm'}">Product</h1>
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <form th:action="@{/products}" th:object="${product}" method="post">
+                <input type="hidden" th:field="*{id}">
+                
+                <div class="form-group">
+                    <label>Tên sản phẩm:</label>
+                    <input type="text" th:field="*{name}" required placeholder="VD: iPhone 16 Pro Max">
+                </div>
+
+                <div class="form-group">
+                    <label>Giá (VNĐ):</label>
+                    <input type="number" th:field="*{price}" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label>URL Hình ảnh:</label>
+                    <input type="text" th:field="*{image}" placeholder="https://example.com/image.jpg">
+                </div>
+
+                <div class="form-group">
+                    <label>Danh mục:</label>
+                    <select th:field="*{category.id}" required>
+                        <option value="">-- Chọn danh mục --</option>
+                        <option th:each="cat : ${categories}" 
+                                th:value="${cat.id}" 
+                                th:text="${cat.name}"></option>
+                    </select>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-top:2rem;">
+                    <button type="submit" class="btn btn-primary" style="flex:1;">Lưu sản phẩm</button>
+                    <a href="/products" class="btn btn-dark" style="background:#6c757d; color:white;">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 - Phát triển ứng dụng với J2EE</p>
+    </footer>
+</body>
+</html>

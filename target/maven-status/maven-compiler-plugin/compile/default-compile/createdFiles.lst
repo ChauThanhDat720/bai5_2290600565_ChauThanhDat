@@ -1,0 +1,9 @@
+com\example\productapp\DataInitializer.class
+com\example\productapp\repository\ProductRepository.class
+com\example\productapp\repository\CategoryRepository.class
+com\example\productapp\controller\HomeController.class
+com\example\productapp\model\Product.class
+com\example\productapp\ProductappApplication.class
+com\example\productapp\service\ProductService.class
+com\example\productapp\model\Category.class
+com\example\productapp\controller\ProductController.class
