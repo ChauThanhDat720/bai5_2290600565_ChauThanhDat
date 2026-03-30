@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Danh sách sản phẩm</title>
@@ -7,14 +7,28 @@
 </head>
 <body>
     <nav class="navbar">
-        <a href="/" class="active">Home</a>
-        <a href="/products">Products</a>
+        <div style="display:flex; gap:2rem; align-items:center;">
+            <a href="/" class="active">Home</a>
+            <a href="/products">Products</a>
+        </div>
+        <div style="margin-left:auto; display:flex; gap:1.5rem; align-items:center;">
+            <span sec:authorize="isAuthenticated()" style="color:rgba(255,255,255,0.7); font-size:0.9rem;">
+                Chào, <span sec:authentication="name" style="color:white; font-weight:600;">User</span> 
+                (<span sec:authentication="principal.authorities" style="font-size:0.8rem;">Role</span>)
+            </span>
+            <a th:href="@{/login}" sec:authorize="!isAuthenticated()" class="btn btn-sm btn-primary">Login</a>
+            <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()" style="margin:0;">
+                <button type="submit" class="btn btn-sm btn-danger">Logout</button>
+            </form>
+        </div>
     </nav>
 
     <div class="container">
         <h1>Quản lý sản phẩm</h1>
         <div class="card">
-            <a th:href="@{/products/new}" class="btn btn-primary">Create New Product</a>
+            <div sec:authorize="hasRole('ADMIN')" style="margin-bottom:1.5rem;">
+                <a th:href="@{/products/new}" class="btn btn-primary">Create New Product</a>
+            </div>
             
             <table>
                 <thead>
@@ -24,7 +38,7 @@
                         <th>Image</th>
                         <th>Price</th>
                         <th>Category Name</th>
-                        <th>Actions</th>
+                        <th sec:authorize="hasRole('ADMIN')">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,7 +50,7 @@
                         </td>
                         <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">27000</td>
                         <td th:text="${product.category != null ? product.category.name : 'N/A'}">Laptop</td>
-                        <td>
+                        <td sec:authorize="hasRole('ADMIN')">
                             <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-sm btn-dark" style="background:#6c757d; color:white;">Edit</a>
                             <a th:href="@{/products/delete/{id}(id=${product.id})}" 
                                class="btn btn-sm btn-danger" 

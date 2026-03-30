@@ -1,4 +1,5 @@
 com\example\productapp\DataInitializer.class
+com\example\productapp\config\SecurityConfig.class
 com\example\productapp\repository\ProductRepository.class
 com\example\productapp\repository\CategoryRepository.class
 com\example\productapp\controller\HomeController.class
