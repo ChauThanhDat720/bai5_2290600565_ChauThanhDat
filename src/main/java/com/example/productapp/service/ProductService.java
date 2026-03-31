@@ -5,6 +5,10 @@ import com.example.productapp.model.Product;
 import com.example.productapp.repository.CategoryRepository;
 import com.example.productapp.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,8 +21,19 @@ public class ProductService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public Page<Product> getProducts(String keyword, Long categoryId, String sortDir, int page, int size) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by("price").descending() : Sort.by("price").ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        
+        if (keyword != null && !keyword.isEmpty()) {
+            if (categoryId != null) {
+                return productRepository.findByNameContainingAndCategoryId(keyword, categoryId, pageable);
+            }
+            return productRepository.findByNameContaining(keyword, pageable);
+        } else if (categoryId != null) {
+            return productRepository.findByCategoryId(categoryId, pageable);
+        }
+        return productRepository.findAll(pageable);
     }
 
     public List<Category> getAllCategories() {

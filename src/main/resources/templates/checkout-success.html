@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đặt hàng thành công</title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div style="display:flex; gap:2rem; align-items:center;">
+            <a href="/">Home</a>
+            <a href="/products">Products</a>
+            <a href="/cart">Cart</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card" style="text-align:center; padding:3rem;">
+            <div style="font-size:4rem; color:var(--success); margin-bottom:1rem;">✓</div>
+            <h1>Đặt hàng thành công!</h1>
+            <p style="color:var(--gray); margin-bottom:2rem;">Cảm ơn bạn đã mua sắm tại cửa hàng của chúng tôi. Đơn hàng của bạn đã được ghi nhận.</p>
+            <a href="/products" class="btn btn-primary">Quay lại cửa hàng</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 - Phát triển ứng dụng với J2EE</p>
+    </footer>
+</body>
+</html>

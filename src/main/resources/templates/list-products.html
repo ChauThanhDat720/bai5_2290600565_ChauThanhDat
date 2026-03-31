@@ -10,6 +10,10 @@
         <div style="display:flex; gap:2rem; align-items:center;">
             <a href="/" class="active">Home</a>
             <a href="/products">Products</a>
+            <a href="/cart" style="position:relative;">
+                Cart 
+                <span class="badge" style="background:var(--primary); color:white; font-size:0.7rem; padding:2px 6px; position:absolute; top:-8px; right:-15px;">Cart</span>
+            </a>
         </div>
         <div style="margin-left:auto; display:flex; gap:1.5rem; align-items:center;">
             <span sec:authorize="isAuthenticated()" style="color:rgba(255,255,255,0.7); font-size:0.9rem;">
@@ -26,9 +30,31 @@
     <div class="container">
         <h1>Quản lý sản phẩm</h1>
         <div class="card">
-            <div sec:authorize="hasRole('ADMIN')" style="margin-bottom:1.5rem;">
-                <a th:href="@{/products/new}" class="btn btn-primary">Create New Product</a>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/products/new}" class="btn btn-primary">Create New Product</a>
+                </div>
             </div>
+
+            <form th:action="@{/products}" method="get" class="filter-form">
+                <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm sản phẩm..." class="form-control">
+                
+                <select name="categoryId" class="form-control">
+                    <option value="">-- Tất cả danh mục --</option>
+                    <option th:each="cat : ${categories}" 
+                            th:value="${cat.id}" 
+                            th:text="${cat.name}"
+                            th:selected="${cat.id == categoryId}"></option>
+                </select>
+
+                <select name="sort" class="form-control">
+                    <option value="asc" th:selected="${sort == 'asc'}">Giá: Thấp đến Cao</option>
+                    <option value="desc" th:selected="${sort == 'desc'}">Giá: Cao đến Thấp</option>
+                </select>
+
+                <button type="submit" class="btn btn-primary">Lọc & Tìm</button>
+                <a th:href="@{/products}" class="btn btn-secondary" th:if="${(keyword != null and keyword != '') or categoryId != null}">Xóa lọc</a>
+            </form>
             
             <table>
                 <thead>
@@ -38,7 +64,7 @@
                         <th>Image</th>
                         <th>Price</th>
                         <th>Category Name</th>
-                        <th sec:authorize="hasRole('ADMIN')">Actions</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,15 +76,31 @@
                         </td>
                         <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">27000</td>
                         <td th:text="${product.category != null ? product.category.name : 'N/A'}">Laptop</td>
-                        <td sec:authorize="hasRole('ADMIN')">
-                            <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-sm btn-dark" style="background:#6c757d; color:white;">Edit</a>
-                            <a th:href="@{/products/delete/{id}(id=${product.id})}" 
-                               class="btn btn-sm btn-danger" 
-                               onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Delete</a>
+                        <td>
+                            <a th:href="@{/cart/add/{id}(id=${product.id})}" class="btn btn-sm btn-success">Add to Cart</a>
+                            <span sec:authorize="hasRole('ADMIN')">
+                                <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-sm btn-dark" style="background:#6c757d; color:white;">Edit</a>
+                                <a th:href="@{/products/delete/{id}(id=${product.id})}" 
+                                   class="btn btn-sm btn-danger" 
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Delete</a>
+                            </span>
                         </td>
                     </tr>
                 </tbody>
             </table>
+
+            <!-- Phân trang -->
+            <div th:if="${totalPages > 0}" class="pagination">
+                <a th:href="@{/products(page=${currentPage - 1}, keyword=${keyword}, categoryId=${categoryId}, sort=${sort})}" 
+                   th:if="${currentPage > 0}" 
+                   class="btn btn-secondary">&laquo; Previous</a>
+                
+                <span class="page-info">Trang <span th:text="${currentPage + 1}">1</span> / <span th:text="${totalPages}">1</span></span>
+                
+                <a th:href="@{/products(page=${currentPage + 1}, keyword=${keyword}, categoryId=${categoryId}, sort=${sort})}" 
+                   th:if="${currentPage < totalPages - 1}" 
+                   class="btn btn-secondary">Next &raquo;</a>
+            </div>
         </div>
     </div>
 

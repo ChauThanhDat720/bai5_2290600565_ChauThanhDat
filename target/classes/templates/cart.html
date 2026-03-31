@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Giỏ hàng</title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div style="display:flex; gap:2rem; align-items:center;">
+            <a href="/">Home</a>
+            <a href="/products">Products</a>
+            <a href="/cart" class="active">Cart</a>
+        </div>
+        <div style="margin-left:auto; display:flex; gap:1.5rem; align-items:center;">
+            <span sec:authorize="isAuthenticated()" style="color:rgba(255,255,255,0.7); font-size:0.9rem;">
+                Chào, <span sec:authentication="name" style="color:white; font-weight:600;">User</span> 
+            </span>
+            <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()" style="margin:0;">
+                <button type="submit" class="btn btn-sm btn-danger">Logout</button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Giỏ hàng của bạn</h1>
+        <div class="card">
+            <div th:if="${cartItems.empty}" style="text-align:center; padding:2rem;">
+                <p>Giỏ hàng đang trống.</p>
+                <a href="/products" class="btn btn-primary">Tiếp tục mua sắm</a>
+            </div>
+
+            <div th:if="${!cartItems.empty}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Giá</th>
+                            <th>Số lượng</th>
+                            <th>Tổng</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${cartItems}">
+                            <td>
+                                <div style="display:flex; gap:1rem; align-items:center;">
+                                    <img th:src="${item.product.image}" alt="Product Image" class="product-img" style="width:50px; height:40px;">
+                                    <span th:text="${item.product.name}">Product Name</span>
+                                </div>
+                            </td>
+                            <td th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">27000</td>
+                            <td th:text="${item.quantity}">1</td>
+                            <td th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">27000</td>
+                            <td>
+                                <a th:href="@{/cart/remove/{id}(id=${item.product.id})}" class="btn btn-sm btn-danger">Xóa</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2rem; padding-top:1rem; border-top:2px solid #edf2f7;">
+                    <h2 style="margin:0;">Tổng cộng: <span th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'" style="color:var(--primary);">0 VNĐ</span></h2>
+                    <div style="display:flex; gap:1rem; align-items:center;">
+                        <a href="/cart/clear" class="btn btn-secondary" onclick="return confirm('Xóa toàn bộ giỏ hàng?')">Xóa toàn bộ</a>
+                        <form th:action="@{/cart/checkout}" method="post" style="margin:0;">
+                            <button type="submit" class="btn btn-success" style="padding: 0.75rem 2rem; font-size: 1.1rem;">Đặt hàng (Checkout)</button>
+                        </form>
+                        <a href="/products" class="btn btn-primary">Tiếp tục mua sắm</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 - Phát triển ứng dụng với J2EE</p>
+    </footer>
+</body>
+</html>
